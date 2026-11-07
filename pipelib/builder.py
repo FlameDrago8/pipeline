@@ -158,7 +158,7 @@ def build(job, cfg, only: str | None = None, retry: bool = False) -> str:
         st = _attempt_loop(job, cfg, key=cid, first_prompt=first, checks=checks, fix_context=first,
                            comp=c, stage="build", tools=cfg["claude"]["build_tools"])
         allowed = set(c["files"]) | set(c["touches"])
-        stray = [f for f in changed_files(ws) if f not in allowed and not f.startswith(("node_modules", "build/", ".gradle"))]
+        stray = [f for f in changed_files(ws) if f not in allowed and not f.startswith(("node_modules", "build/", ".gradle")) and f != "package-lock.json"]
         if stray:
             st["outside_scope"] = stray
             _log(f"  [{cid}] note: also changed {', '.join(stray[:8])}")
