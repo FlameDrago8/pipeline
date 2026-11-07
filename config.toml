@@ -1,0 +1,26 @@
+# Commission pipeline settings. Everything here is optional; defaults live in pipelib/config.py.
+
+# Jobs and leads are stored here, OUTSIDE the pipeline folder, so replacing the
+# pipeline code never deletes them. Override with the COMMISSION_DATA env var.
+data_dir = "~/commission-data"
+
+[claude]
+bin = "claude"            # or set CLAUDE_BIN
+model = ""                # "" = account default; e.g. "sonnet" to spend less on builds
+timeout_sec = 900
+max_turns_text = 2        # spec / plan / pitch: tools disabled, one answer
+max_turns_build = 40      # tool turns inside ONE build prompt
+build_tools = ["Read", "Write", "Edit", "Glob", "Grep"]   # no Bash: the pipeline runs checks itself
+extra_args = ["--strict-mcp-config"]                      # don't load MCP servers into each chat
+fix_mode = "resume"       # "resume": fix prompts continue the component's chat
+                          # "fresh": each fix prompt is a new chat with a compact context packet
+
+[limits]
+max_prompts_per_component = 3   # 1 build prompt + up to 2 fix prompts (hard cap 3)
+max_plan_prompts = 2            # 2nd prompt only if the first plan was invalid
+max_components = 8
+check_output_lines = 60         # lines of failing check output sent back to Claude
+
+[checks]
+timeout_sec = 900
+allow = ["node", "npm", "npx", "python3", "python", "gradle", "./gradlew", "luac", "java", "javac", "mvn", "go", "cargo"]
